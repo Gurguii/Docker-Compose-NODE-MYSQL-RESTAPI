@@ -1,8 +1,11 @@
 const express = require('express');
+require('dotenv').config();
 const db = require('./db.js');
 const parser = require('./parser.js');
-const port = 3000;
+const port = process.env.NODE_DOCKER_PORT;
 const app = express();
+
+const send404 = (r) => {r.sendStatus(404).end();}
 
 app.use(express.json())
 
@@ -19,13 +22,9 @@ app.get('/',(req,res) => {
 app.get('/:tbname',(req,res) => {
 	db.query(`select * from ${req.params.tbname}`, (err,data) => {
 		if(err){
-			res.sendStatus(404).end();
-			console.log(err.stack);
-			return;
+			send404(res);return;
 		}
-		else{
-			res.send(data);
-		}
+		res.send(data);
 	});
 });
 
@@ -39,15 +38,12 @@ app.get('/:tbname/:ssyntax',(req,res) => {
     let query = parser.select_query(req.params.tbname,req.params.ssyntax);
     if(!query)
     {
-        res.sendStatus(404).end();
-        return;
+        send404(res);return;
     }
     db.query(query,(err,data) => {
         if(err)
         {
-            console.log(err.stack);
-            res.sendStatus(404).end();
-            return;
+            send404(res);return;
         }
         res.send(data);
     });
@@ -63,17 +59,14 @@ app.post('/:tbname/:ssyntax',(req,res) => {
     let query = parser.insert_query(req.params.tbname,req.params.ssyntax);
     if(!query)
     {
-        res.sendStatus(404).end();
-        return;
+        send404(res);return;
     }
     db.query(query,(err,data) => {
         if(err)
         {
-            console.log(err.stack);
-            res.sendStatus(404).end();
-            return;
+            send404(res);return;
         }
-        res.send("good");
+        res.send(data);
     })
 });
 
@@ -87,15 +80,12 @@ app.put('/:tbname/:ssyntax',(req,res) => {
     let query = parser.update_query(req.params.tbname,req.params.ssyntax);
     if(!query)
     {
-        res.sendStatus(404).end();
-        return;
+        send404(res);return;
     }
     db.query(query,(err,data)=>{
         if(err)
         {
-            console.log(err.stack);
-            res.sendStatus(404).end();
-            return;
+            send404(res);return;
         }
         res.send(data)
     })
@@ -111,15 +101,12 @@ app.delete('/:tbname/:ssyntax',(req,res) => {
     let query = parser.delete_query(req.params.tbname,req.params.ssyntax);
     if(!query)
     {
-        res.sendStatus(404).end();
-        return;
+        send404(res);return;
     }
     db.query(query,(err,data) => {
         if(err)
         {
-            console.log(err.stack);
-            res.sendStatus(404).end();
-            return;
+            send404(res);return;
         }
         res.send(data);
     })

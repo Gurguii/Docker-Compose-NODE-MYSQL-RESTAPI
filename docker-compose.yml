@@ -11,7 +11,7 @@ services:
                 volumes:
                         - "./data.sql:/docker-entrypoint-initdb.d/1.sql"
                         - db:/var/lib/mysql
-        app:
+        api:
                 depends_on:
                         - mysqldb
                 build: ./g-app
