@@ -1,0 +1,30 @@
+version: '3.3'
+
+services:
+        mysqldb:
+                image: mysql
+                restart: unless-stopped
+                env_file: ./.env
+                environment:
+                        - MYSQL_ROOT_PASSWORD=$DB_ROOT_PASSWORD
+                        - MYSQL_DATABASE=$DB_NAME
+                volumes:
+                        - "./data.sql:/docker-entrypoint-initdb.d/1.sql"
+                        - db:/var/lib/mysql
+        app:
+                depends_on:
+                        - mysqldb
+                build: ./g-app
+                restart: unless-stopped
+                env_file: ./.env
+                ports:
+                        - $NODE_LOCAL_PORT:$NODE_DOCKER_PORT
+                environment:
+                        - DB_HOST=mysqldb
+                        - DB_USER=$DB_USER
+                        - DB_PASSWORD=$DB_PASS
+                        - DB_NAME=$DB_NAME
+                        - DB_PORT=$MYSQL_DOCKER_PORT
+volumes:
+        db:
+
