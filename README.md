@@ -12,18 +12,11 @@ Docker-compose project that sets up a containerized NodeJS & Mysql REST api.
 ```bash
 cd Docker-Compose-NODE-MYSQL-RESTAPI
 ```  
-Mysql volume and docker containers will be called ***"Docker-Compose-NODE-MYSQL-RESTAPI.db|app_1|mysqldb_1"*** so change dir name if you want a custom/shorter/w.e one.  
-
-To change the app/mysqldb name, do it in the **docker-compose.yml** file
 ### Build, create and start containers
 ```bash
 docker-compose up
 ```  
 Add **-d** if you don't want to attach to containers once started  
-### Delete everything created from a docker-compose.yml  
-```bash
-docker-compose down --rmi all
-```
 #### At this point, you should have both containers running, with local port 3000 being forwarded to App docker local 3000.  
 To test that everything is working as expected you can try retrieving all the data from one of the default tables(users, clients, tasks):  
 ```bash
