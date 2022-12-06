@@ -6,11 +6,15 @@ const pool = mysql.createPool({
 	user : process.env.DB_USER,
 	password : process.env.DB_PASS,
 	database : process.env.DB_NAME,
-	debug : false
+	debug : false,
+	connectionLimit : 10
 });
 
-/*pool.getConnection((err,connection) => {
-	err ? console.log(err.stack) : console.log('Connected to database');
-});
-*/
-module.exports = pool
+const connectToDb = () => {
+	pool.getConnection((err,connection) => {
+		err ? console.log(err.stack) : console.log(`Connected to database ${process.env.DB_NAME}`);
+	});
+}
+
+exports.pool = pool
+exports.connectToDb = connectToDb

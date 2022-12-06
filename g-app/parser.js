@@ -17,7 +17,6 @@ exports.select_query = (tbname,ssyntax) => {
 	 * <fields>:<condition>
 	 * Request GET /test/name,age:name:'gurgui' => SELECT name, age FROM test WHERE name='gurgui';
 	 */
-    console.log("[+] - Parsing select query");
 
     let [fields, condition] = ssyntax.split(':');
 
@@ -49,7 +48,6 @@ exports.insert_query = (tbname,ssyntax) => {
 	 * <fields>:<values>
 	 * Request POST /test/name,age:'gurgui',21 => INSERT INTO test (name,age) values('gurgui',21);
 	 */
-    console.log("[+] - Parsing insert query");
     let [fields,values] = ssyntax.split(':');
 
     if(!checkBadchars(ssyntax))
@@ -70,7 +68,6 @@ exports.update_query = (tbname,ssyntax) => {
 	 * <set values>:<condition>
 	 * Request PUT /test/name='gurgui':id=4 => UPDATE test SET name='gurgui' WHERE id=4;
 	 */
-    console.log("[+] - Parsing update query");
     let [values, conditions] = ssyntax.split(':');
     if(!values || !conditions)
     {
@@ -84,7 +81,6 @@ exports.delete_query = (tbname,ssyntax) => {
 	 * <condition_key>:<condition_value>s
 	 * Request /DELETE /test/id:3 => DELETE FROM Test where id=5;
 	 */
-    console.log("[+] - Parsing delete query");
 
     if(!checkBadchars(ssyntax))
     {

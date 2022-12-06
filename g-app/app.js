@@ -9,6 +9,20 @@ const send404 = (r) => {r.sendStatus(404).end();}
 
 app.use(express.json())
 
+const doQuery = (query) => {
+    return new Promise((resolve, reject) => {
+        db.pool.query(query,(err,data) => {
+            if (err){
+                reject(err);
+            }else{
+                resolve(data);
+            }
+        })
+    })
+}
+
+db.connectToDb();
+
 app.get('/',(req,res) => {
 	res.sendStatus(404).end();
 	return;
@@ -19,13 +33,14 @@ app.get('/',(req,res) => {
  * Curl => curl http://<ip>:3000/<nombre_tabla>
  */
 
-app.get('/:tbname',(req,res) => {
-	db.query(`select * from ${req.params.tbname}`, (err,data) => {
-		if(err){
-			send404(res);return;
-		}
-		res.send(data);
-	});
+app.get('/:tbname',async (req,res) => {
+    let query = `SELECT * FROM ${req.params.tbname}`;
+    try{
+        res.send(await doQuery(query));
+    }catch(e){
+        send404(res);
+        console.log(`There was an error => ${e}`);
+    }
 });
 
 /* Método: GET
@@ -34,19 +49,18 @@ app.get('/:tbname',(req,res) => {
  * curl http://<ip>:3000/<nombre_tabla>/<ssyntax>
  */
 
-app.get('/:tbname/:ssyntax',(req,res) => {
+app.get('/:tbname/:ssyntax',async (req,res) => {
     let query = parser.select_query(req.params.tbname,req.params.ssyntax);
     if(!query)
     {
         send404(res);return;
     }
-    db.query(query,(err,data) => {
-        if(err)
-        {
-            send404(res);return;
-        }
-        res.send(data);
-    });
+    try{
+        res.send(await doQuery(query));
+    }catch(e){
+        send404(res);
+        console.log(`There was an error => ${e}`)
+    }
 });
 
 /* Método: POST
@@ -55,19 +69,18 @@ app.get('/:tbname/:ssyntax',(req,res) => {
  * curl -XPOST http://<ip>:3000/<nombre_tabla>/<ssyntax>
  */
 
-app.post('/:tbname/:ssyntax',(req,res) => {
+app.post('/:tbname/:ssyntax',async (req,res) => {
     let query = parser.insert_query(req.params.tbname,req.params.ssyntax);
     if(!query)
     {
         send404(res);return;
     }
-    db.query(query,(err,data) => {
-        if(err)
-        {
-            send404(res);return;
-        }
-        res.send(data);
-    })
+    try{
+        res.send(await doQuery(query));
+    }catch(e){
+        send404(res);
+        console.log(`There was an error => ${e}`)
+    }
 });
 
 /* Método: PUT
@@ -76,19 +89,18 @@ app.post('/:tbname/:ssyntax',(req,res) => {
  * curl -XPUT http://<ip>:3000/<nombre_tabla>/<ssyntax>
  */
 
-app.put('/:tbname/:ssyntax',(req,res) => {
+app.put('/:tbname/:ssyntax',async (req,res) => {
     let query = parser.update_query(req.params.tbname,req.params.ssyntax);
     if(!query)
     {
         send404(res);return;
     }
-    db.query(query,(err,data)=>{
-        if(err)
-        {
-            send404(res);return;
-        }
-        res.send(data)
-    })
+    try{
+        res.send(await doQuery(query));
+    }catch(e){
+        send404(res);
+        console.log(`There was an error => ${e}`)
+    }
 });
 
 /* Método: DELETE
@@ -97,19 +109,18 @@ app.put('/:tbname/:ssyntax',(req,res) => {
  * curl -XDELETE http://<ip>:3000/<nombre_tabla>/<ssyntax>
  */
 
-app.delete('/:tbname/:ssyntax',(req,res) => {
+app.delete('/:tbname/:ssyntax',async (req,res) => {
     let query = parser.delete_query(req.params.tbname,req.params.ssyntax);
     if(!query)
     {
         send404(res);return;
     }
-    db.query(query,(err,data) => {
-        if(err)
-        {
-            send404(res);return;
-        }
-        res.send(data);
-    })
+    try{
+        res.send(await doQuery(query));
+    }catch(e){
+        send404(res);
+        console.log(`There was an error => ${e}`)
+    }
 });
 
 app.listen(port,() => {
